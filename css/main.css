@@ -641,3 +641,9 @@ button,a,.button,select{ touch-action:manipulation; }
 @media(max-width:980px){.home-page .poster-grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:14px 9px}}
 @media(max-width:700px){.home-page .poster-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 9px}}
 @media(max-width:390px){.home-page .poster-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 8px}}
+
+/* Keep anime artwork on detail/watch pages compact, matching the homepage poster scale. */
+.detail-content .detail-cover{width:115px;max-width:100%;aspect-ratio:2/3;object-fit:cover}
+.watch-anime-info .watch-info-poster{width:115px;max-width:100%;height:auto;aspect-ratio:2/3;object-fit:cover}
+@media(max-width:800px){.detail-content .detail-cover{width:100px}.watch-anime-info .watch-info-poster{width:90px}}
+@media(max-width:560px){.detail-content .detail-cover{width:76px}.watch-anime-info .watch-info-poster{width:74px}}
