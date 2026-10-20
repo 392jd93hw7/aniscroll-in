@@ -642,11 +642,11 @@ button,a,.button,select{ touch-action:manipulation; }
 @media(max-width:700px){.home-page .poster-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 9px}}
 @media(max-width:390px){.home-page .poster-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 8px}}
 
-/* Keep anime artwork on detail/watch pages compact, matching the homepage poster scale. */
-.detail-content .detail-cover{width:115px;max-width:100%;aspect-ratio:2/3;object-fit:cover}
+/* Restore original anime detail banner proportions while keeping watch-page artwork compact. */
+.detail-content .detail-cover{width:180px;max-width:100%;aspect-ratio:2/2.9;object-fit:cover}
 .watch-anime-info .watch-info-poster{width:115px;max-width:100%;height:auto;aspect-ratio:2/3;object-fit:cover}
-@media(max-width:800px){.detail-content .detail-cover{width:100px}.watch-anime-info .watch-info-poster{width:90px}}
-@media(max-width:560px){.detail-content .detail-cover{width:76px}.watch-anime-info .watch-info-poster{width:74px}}
+@media(max-width:800px){.detail-content .detail-cover{width:135px}.watch-anime-info .watch-info-poster{width:90px}}
+@media(max-width:560px){.detail-content .detail-cover{width:90px}.watch-anime-info .watch-info-poster{width:74px}}
 
 /* Compact poster cards in anime detail recommendations ("Related titles" / "You might also like"). */
 .detail-section .related-grid .poster-cover{width:100%;aspect-ratio:2/3;height:auto}
