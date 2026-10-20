@@ -110,7 +110,7 @@ async function watchPage(){
  const box=$("#watch-app");
  if(!Number.isInteger(id)||id<1){box.innerHTML='<div class="error-state"><h2>Choose an anime first</h2><a href="/search.html">Discover anime</a></div>';return}
  try{
-  let a,useMalIds=sourceMal,metadataFromMal=sourceMal;
+  let a,useMalIds=sourceMal||initialMalId>0,metadataFromMal=sourceMal;
   if(sourceMal){a=await getMalAnime(initialMalId||id);useMalIds=true;metadataFromMal=true;}
   else{try{a=await getAnime(id)}catch(anilistError){if(!initialMalId)throw anilistError;a=await getMalAnime(initialMalId);useMalIds=true;metadataFromMal=true;}}
   const malId=Number(a.idMal)||initialMalId,count=Number(a.episodes)||0,animeTitle=title(a),poster=cover(a);
