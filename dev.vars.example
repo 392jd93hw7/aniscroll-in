@@ -1,0 +1,5 @@
+# No private API keys are required for public AniList discovery.
+# Keep future server-side secrets in .dev.vars and never commit that file.
+
+# Required only for the MyAnimeList fallback API.
+MAL_CLIENT_ID=your_myanimelist_client_id

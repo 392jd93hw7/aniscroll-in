@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Opening watch page — Aniscroll</title>
+  <script>
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get("id");
+      if (!id || !/^\d+$/.test(id)) {
+        window.location.replace("/index.html");
+        return;
+      }
+      const episode = params.get("ep") || "1";
+      const watch = new URL("/watch.html", window.location.origin);
+      watch.searchParams.set("id", id);
+      watch.searchParams.set("ep", /^\d+$/.test(episode) ? episode : "1");
+      for (const key of ["mode", "provider"]) {
+        const value = params.get(key);
+        if (value) watch.searchParams.set(key, value);
+      }
+      window.location.replace(watch.pathname + watch.search);
+    })();
+  </script>
+</head>
+<body>
+  <p>Opening the watch page… <a href="/index.html">Return to Aniscroll</a></p>
+</body>
+</html>
