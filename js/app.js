@@ -114,6 +114,7 @@ async function watchPage(){
   if(sourceMal){a=await getMalAnime(initialMalId||id);useMalIds=true;metadataFromMal=true;}
   else{try{a=await getAnime(id)}catch(anilistError){if(!initialMalId)throw anilistError;a=await getMalAnime(initialMalId);useMalIds=true;metadataFromMal=true;}}
   const malId=Number(a.idMal)||initialMalId,count=Number(a.episodes)||0,animeTitle=title(a),poster=cover(a);
+  if(!sourceMal&&malId>0&&id!==malId)useMalIds=true;
   const availableEpisodeCount=a.status==="RELEASING"&&a.nextAiringEpisode&&Number(a.nextAiringEpisode.episode)>0?Math.min(count||Number(a.nextAiringEpisode.episode)-1,Number(a.nextAiringEpisode.episode)-1):count;
   document.title="Watch "+animeTitle+" — Aniscroll";
   const description=(a.description||"No synopsis available.").replace(/<[^>]*>/g," ").replace(/\s+/g," ").trim();
@@ -193,14 +194,15 @@ async function watchPage(){
   }
   function handleStreamFailure(){
    if(provider!=="zokoanime"||fallbackAttempted)return;
-   if(!useMalIds&&malId){
-    useMalIds=true;
-    toast("AniList stream failed. Trying the MAL ID…");
+   if(useMalIds&&!metadataFromMal&&malId>0&&id>0&&id!==malId){
+    fallbackAttempted=true;
+    useMalIds=false;
+    toast("MAL ID playback failed. Trying the AniList ID…");
     load();
     return;
    }
    fallbackAttempted=true;
-   toast("ZokoAnime could not load this episode with either ID. Try another episode or select MegaPlay manually.");
+   toast("ZokoAnime could not load this episode with the available IDs. Try another episode or select MegaPlay manually.");
   }
   function setEpisode(n){if(Number.isInteger(n)&&n>=1&&n<=availableEpisodeCount){ep=n;fallbackAttempted=false;useMalIds=metadataFromMal;load()}}
   $("#episode-search").addEventListener("input",episodeList);
