@@ -16,6 +16,15 @@ export default defineConfig(({ mode }) => {
     plugins: [{
       name: "aniscroll-provider-availability",
       configureServer(server) {
+        // Match the clean anime routes used by production Vercel rewrites while running in Codespaces.
+        server.middlewares.use((req, res, next) => {
+          const url = new URL(req.url || "/", "http://localhost");
+          const match = url.pathname.match(/^\\/anime\\/(\\d+)(?:\\/[^/]*)?\\/?$/);
+          if (match) {
+            req.url = "/anime.html?id=" + encodeURIComponent(match[1]);
+          }
+          next();
+        });
         server.middlewares.use("/api/mal/genre", async (req, res) => {
           try {
             const url = new URL(req.url, "http://localhost");
