@@ -647,3 +647,11 @@ button,a,.button,select{ touch-action:manipulation; }
 .watch-anime-info .watch-info-poster{width:115px;max-width:100%;height:auto;aspect-ratio:2/3;object-fit:cover}
 @media(max-width:800px){.detail-content .detail-cover{width:100px}.watch-anime-info .watch-info-poster{width:90px}}
 @media(max-width:560px){.detail-content .detail-cover{width:76px}.watch-anime-info .watch-info-poster{width:74px}}
+
+/* Compact poster cards in anime detail recommendations ("Related titles" / "You might also like"). */
+.detail-section .related-grid .poster-cover{width:100%;aspect-ratio:2/3;height:auto}
+.detail-section .related-grid .poster-title{font-size:11px;line-height:1.35;margin-top:7px;min-height:0}
+.detail-section .related-grid .poster-meta{font-size:9px;margin-top:3px}
+@media(min-width:1251px){.detail-section .related-grid{grid-template-columns:repeat(4,minmax(0,115px));gap:14px}}
+@media(min-width:701px) and (max-width:1250px){.detail-section .related-grid{grid-template-columns:repeat(4,minmax(0,100px));gap:12px}}
+@media(max-width:700px){.detail-section .related-grid{grid-template-columns:repeat(3,minmax(0,76px));gap:10px}}
