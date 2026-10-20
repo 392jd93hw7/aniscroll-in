@@ -630,3 +630,10 @@ button,a,.button,select{ touch-action:manipulation; }
 @media(prefers-reduced-motion:reduce){
  *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
+
+/* Home discovery sections: ten anime cards per row on wide desktop screens. */
+.home-page .poster-grid{grid-template-columns:repeat(10,minmax(0,1fr));gap:18px 10px}
+@media(max-width:1250px){.home-page .poster-grid{grid-template-columns:repeat(6,minmax(0,1fr));gap:16px 10px}}
+@media(max-width:980px){.home-page .poster-grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:14px 9px}}
+@media(max-width:700px){.home-page .poster-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 9px}}
+@media(max-width:390px){.home-page .poster-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 8px}}
