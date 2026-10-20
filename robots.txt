@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /watch.html
+Disallow: /history.html
+Disallow: /watchlist.html
+Disallow: /anime.html
+Disallow: /search.html?
+
+Sitemap: https://aniscroll.in/sitemap.xml
