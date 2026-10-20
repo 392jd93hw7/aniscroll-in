@@ -39,9 +39,9 @@ async function home(){
  $("#hero-prev")?.addEventListener("click",()=>{setSlide(active-1);restartTimer()});
  $("#hero-next")?.addEventListener("click",()=>{setSlide(active+1);restartTimer()});
  const loaders=[
-  ["trending-grid",()=>getAnimeList("TRENDING",12)],
-  ["popular-grid",()=>getAnimeList("POPULARITY",6)],
-  ["season-grid",()=>getCurrentAnime(6)]
+  ["trending-grid",()=>getAnimeList("TRENDING",24)],
+  ["popular-grid",()=>getAnimeList("POPULARITY",18)],
+  ["season-grid",()=>getCurrentAnime(18)]
  ];
  const tasks=loaders.map(async([id,fn])=>{
   try{
