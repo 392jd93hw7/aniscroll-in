@@ -161,6 +161,10 @@ async function watchPage(){
    try{
     const [subProviders,dubProviders]=await Promise.all([check("sub"),check("dub")]);
     if(version!==availabilityVersion)return;
+    // Only expose MegaPlay as an alternate when ZokoAnime itself has that audio track.
+    // If ZokoAnime has no SUB/DUB for this episode, hide that whole audio row.
+    const visibleSubProviders=subProviders.includes("zokoanime")?subProviders.filter(name=>name==="zokoanime"||name==="megaplay"):[];
+    const visibleDubProviders=dubProviders.includes("zokoanime")?dubProviders.filter(name=>name==="zokoanime"||name==="megaplay"):[];
     const updateRow=(row,audioMode,providers)=>{
      row.querySelectorAll(".server-choice").forEach(button=>button.remove());
      const currentStatus=row.querySelector("#dub-availability");
@@ -180,11 +184,13 @@ async function watchPage(){
       row.append(button);
      });
     };
-    updateRow(subRow,"sub",subProviders);updateRow(dubRow,"dub",dubProviders);
-    const currentAvailable=(mode==="dub"?dubProviders:subProviders).includes(provider);
+    subRow.hidden=!visibleSubProviders.length;
+    dubRow.hidden=!visibleDubProviders.length;
+    updateRow(subRow,"sub",visibleSubProviders);updateRow(dubRow,"dub",visibleDubProviders);
+    const currentAvailable=(mode==="dub"?visibleDubProviders:visibleSubProviders).includes(provider);
     if(!currentAvailable){
-     const preferredMode=subProviders.length?"sub":dubProviders.length?"dub":null;
-     if(preferredMode){const list=preferredMode==="sub"?subProviders:dubProviders;mode=preferredMode;provider=list.includes("zokoanime")?"zokoanime":list[0];}
+     const preferredMode=visibleSubProviders.length?"sub":visibleDubProviders.length?"dub":null;
+     if(preferredMode){const list=preferredMode==="sub"?visibleSubProviders:visibleDubProviders;mode=preferredMode;provider=list.includes("zokoanime")?"zokoanime":list[0];}
     }
    }catch{
     if(version!==availabilityVersion)return;
