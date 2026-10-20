@@ -2,9 +2,8 @@ const SITE = "https://aniscroll.in";
 const API = "https://graphql.anilist.co";
 const QUERY = `query { Page(page: 1, perPage: 50) { media(type: ANIME, isAdult: false, sort: POPULARITY_DESC) { id title { english romaji native } updatedAt } } }`;
 function slug(value) {
-  return String(value || "anime").normalize("NFKD").toLowerCase()
-    .replace(/[\\u0300-\\u036f]/g, "").replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "").slice(0, 80) || "anime";
+  return String(value || "anime").toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 80) || "anime";
 }
 export default async function handler(req, res) {
   try {
