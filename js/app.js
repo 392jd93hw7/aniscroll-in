@@ -180,9 +180,27 @@ async function watchPage(){
    $$("[data-ep]",n).forEach(b=>b.addEventListener("click",()=>setEpisode(Number(b.dataset.ep))));
   }
   let fallbackAttempted=false,anilistStreamAttempted=false,frameLoadTimer=null;
-  function load(){
+  let loadVersion=0;
+  async function load(){
+   const version=++loadVersion;
    if(provider==="megaplay"&&mode==="hsub")mode="sub";
    if(frameLoadTimer){clearTimeout(frameLoadTimer);frameLoadTimer=null}
+   // Check MAL-ID availability before embedding ZokoAnime. Its internal 404 page still fires iframe load,
+   // so iframe load/error events alone cannot reliably detect a missing episode.
+   if(provider==="zokoanime"&&useMalIds&&!metadataFromMal&&malId>0&&id>0&&id!==malId){
+    try{
+     const check=await fetch("/api/provider-availability?id="+encodeURIComponent(id)+"&mal="+encodeURIComponent(malId)+"&ep="+encodeURIComponent(ep)+"&mode="+encodeURIComponent(mode));
+     const data=check.ok?await check.json():null;
+     if(version!==loadVersion)return;
+     const zoko=(data?.providers||[]).find(x=>x.provider==="zokoanime");
+     if(zoko&&!zoko.available){
+      fallbackAttempted=true;useMalIds=false;
+      toast("MAL ID has no stream for this episode. Trying AniList ID…");
+      return load();
+     }
+    }catch{}
+   }
+   if(version!==loadVersion)return;
    const src=streamURL(provider,id,ep,mode,malId,useMalIds)+"?color=a78bfa";
    const frame=document.createElement("iframe");
    frame.src=src;frame.title=animeTitle+" episode "+ep;
@@ -208,10 +226,10 @@ async function watchPage(){
    fallbackAttempted=true;
    toast("ZokoAnime could not load this episode with the available IDs. Try another episode or select MegaPlay manually.");
   }
-  function setEpisode(n){if(Number.isInteger(n)&&n>=1&&n<=availableEpisodeCount){ep=n;fallbackAttempted=false;useMalIds=metadataFromMal;load()}}
+  function setEpisode(n){if(Number.isInteger(n)&&n>=1&&n<=availableEpisodeCount){ep=n;fallbackAttempted=false;useMalIds=metadataFromMal||malId>0;load()}}
   $("#episode-search").addEventListener("input",episodeList);
   $("#prev-text").addEventListener("click",()=>setEpisode(ep-1));$("#next-text").addEventListener("click",()=>setEpisode(ep+1));
-  $$("[data-provider]").forEach(b=>b.addEventListener("click",()=>{provider=b.dataset.provider;mode=b.dataset.mode;fallbackAttempted=false;useMalIds=metadataFromMal;load()}));
+  $$("[data-provider]").forEach(b=>b.addEventListener("click",()=>{provider=b.dataset.provider;mode=b.dataset.mode;fallbackAttempted=false;useMalIds=metadataFromMal||malId>0;load()}));
   if(metadataFromMal){$("#save-watch").hidden=true;}else $("#save-watch").addEventListener("click",()=>{const saved=toggleSaved(id);$("#save-watch").textContent=saved?"✓ Added to List":"＋ Add to List";toast(saved?"Added to watchlist":"Removed from watchlist")});
   let lightOn=true,autoPlay=true,autoNext=false,skipIntro=false;
   function toggleSetting(id,label,get,set){const b=$("#"+id);b.addEventListener("click",()=>{set(!get());b.innerHTML=label+' <strong>'+(get()?"On":"Off")+'</strong>';if(id==="light-toggle"||id==="toggle-light")document.body.classList.toggle("watch-lights-off",!get())})}
