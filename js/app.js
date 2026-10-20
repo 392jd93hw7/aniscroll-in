@@ -145,17 +145,51 @@ async function watchPage(){
     '</section>'+
     '<aside class="watch-related-sidebar"><h2>Related</h2><div class="watch-related-list">'+(seasons.length?seasons.map(x=>'<a class="watch-related-item" href="'+animeUrl(x.node)+'"><img src="'+esc(x.node.coverImage?.medium||x.node.coverImage?.large||"")+'" alt=""><span><strong>'+esc(x.node.title?.english||x.node.title?.romaji||"Related anime")+'</strong><small>'+esc(x.node.format||"Anime")+' · '+(x.node.episodes?Number(x.node.episodes)+" Eps":"Episodes unknown")+(x.node.duration?" · "+Number(x.node.duration)+" min":"")+'</small></span></a>').join(""):'<p class="related-empty">No related titles found.</p>')+'</div></aside>'+
    '</div>';
-  async function checkDubAvailability(){
-   const status=$("#dub-availability"),row=$("#dub-server-row");
-   if(!status||!row)return;
+  let availabilityVersion=0;
+  async function checkEpisodeAvailability(){
+   const version=++availabilityVersion;
+   const subRow=$$(".server-row").find(row=>row.querySelector('[data-mode="sub"]'));
+   const dubRow=$("#dub-server-row");
+   if(!subRow||!dubRow)return;
+   const check=async audioMode=>{
+    const query=new URLSearchParams({id:String(id),mal:String(malId||0),ep:String(ep),mode:audioMode});
+    const response=await fetch("/api/provider-availability?"+query.toString(),{cache:"no-store"});
+    if(!response.ok)throw new Error("Availability check failed");
+    const data=await response.json();
+    return (data.providers||[]).filter(item=>item.available).map(item=>item.provider);
+   };
    try{
-    const response=await fetch("/api/provider-availability?id="+encodeURIComponent(id)+"&mal="+encodeURIComponent(malId||0)+"&ep="+encodeURIComponent(ep)+"&mode=dub");
-    if(!response.ok)throw new Error("Availability check unavailable");
-    const result=await response.json(),available=(result.providers||[]).filter(x=>x.available);
-    if(!available.length){status.textContent="Dub not available";return}
-    status.remove();
-    available.forEach(x=>{const b=document.createElement("button");b.type="button";b.className="server-choice";b.dataset.provider=x.provider;b.dataset.mode="dub";b.textContent=x.provider==="zokoanime"?"ZokoAnime":"MegaPlay";b.addEventListener("click",()=>{provider=x.provider;mode="dub";load()});row.appendChild(b)});
-   }catch{status.textContent="Dub availability unknown";}
+    const [subProviders,dubProviders]=await Promise.all([check("sub"),check("dub")]);
+    if(version!==availabilityVersion)return;
+    const updateRow=(row,audioMode,providers)=>{
+     row.querySelectorAll(".server-choice").forEach(button=>button.remove());
+     const currentStatus=row.querySelector("#dub-availability");
+     if(!providers.length){
+      if(audioMode==="dub"){
+       if(currentStatus){currentStatus.textContent="Dub unavailable for this episode";currentStatus.hidden=false;}
+       else {const label=document.createElement("span");label.id="dub-availability";label.className="dub-availability";label.textContent="Dub unavailable for this episode";row.append(label);}
+      }else{
+       let note=row.querySelector(".audio-unavailable");if(!note){note=document.createElement("span");note.className="audio-unavailable";row.append(note)}note.textContent="Sub unavailable for this episode";
+      }
+      return;
+     }
+     currentStatus?.remove();row.querySelector(".audio-unavailable")?.remove();
+     providers.forEach(name=>{
+      const button=document.createElement("button");button.type="button";button.className="server-choice";button.dataset.provider=name;button.dataset.mode=audioMode;button.textContent=name==="zokoanime"?"ZokoAnime":"MegaPlay";
+      button.addEventListener("click",()=>{provider=name;mode=audioMode;fallbackAttempted=false;useMalIds=metadataFromMal||malId>0;load()});
+      row.append(button);
+     });
+    };
+    updateRow(subRow,"sub",subProviders);updateRow(dubRow,"dub",dubProviders);
+    const currentAvailable=(mode==="dub"?dubProviders:subProviders).includes(provider);
+    if(!currentAvailable){
+     const preferredMode=subProviders.length?"sub":dubProviders.length?"dub":null;
+     if(preferredMode){const list=preferredMode==="sub"?subProviders:dubProviders;mode=preferredMode;provider=list.includes("zokoanime")?"zokoanime":list[0];}
+    }
+   }catch{
+    if(version!==availabilityVersion)return;
+    const status=$("#dub-availability");if(status)status.textContent="Availability check failed";
+   }
   }
   function updateURL(){const u=new URL(location.href);u.searchParams.set("ep",ep);u.searchParams.set("mode",mode);u.searchParams.set("provider",provider);if(malId)u.searchParams.set("mal",malId);history.replaceState({},"",u)}
   function episodeList(){
@@ -182,6 +216,7 @@ async function watchPage(){
   let fallbackAttempted=false,anilistStreamAttempted=false,frameLoadTimer=null;
   let loadVersion=0;
   async function load(){
+   checkEpisodeAvailability();
    const version=++loadVersion;
    if(provider==="megaplay"&&mode==="hsub")mode="sub";
    if(frameLoadTimer){clearTimeout(frameLoadTimer);frameLoadTimer=null}
@@ -247,7 +282,7 @@ async function watchPage(){
    tick();const airingTimer=setInterval(()=>{if(!document.getElementById("airing-countdown")){clearInterval(airingTimer);return}tick()},1000);
    close?.addEventListener("click",()=>{notice.remove();clearInterval(airingTimer)});
   }
-  load();checkDubAvailability();
+  load();checkEpisodeAvailability();
  }catch(e){box.innerHTML='<div class="error-state"><h2>Could not open this anime</h2><p>'+esc(e.message)+'</p><a href="/search.html">Back to discovery</a></div>'}
 }
 async function library(type){const n=type==="watchlist"?$("#library-results"):$("#history-results");if(type==="history"){$("#clear-history")?.addEventListener("click",()=>{if(confirm("Clear history on this device?")){write(K.h,[]);drawHistory(n,[])}});drawHistory(n,read(K.h));return}let filter="all";async function render(){const all=watchlist(),items=filter==="all"?all:all.filter(x=>x.status===filter);if(!items.length){n.innerHTML='<div class="empty-state"><span>♡</span><h2>Your watchlist starts here</h2><p>Save anime from any poster preview to build your collection.</p><a class="button button-primary" href="/search.html">Discover anime</a></div>';return}try{const aa=await getAnimeByIds(items.map(x=>x.id)),m=new Map(aa.map(x=>[x.id,x]));n.innerHTML=items.map(x=>{const a=m.get(Number(x.id));if(!a)return"";return'<article class="poster-card"><a class="poster-cover" href="/watch.html?id='+a.id+'"><img src="'+esc(cover(a))+'" alt="'+esc(title(a))+'"><span class="poster-score">★ '+score(a)+'</span></a><a class="poster-title" href="/watch.html?id='+a.id+'">'+esc(title(a))+'</a><div class="poster-meta">'+esc(meta(a))+'</div><label class="field" style="margin-top:8px"><span>List status</span><select class="control-select list-status" data-id="'+a.id+'" style="width:100%;max-width:none"><option value="watching" '+(x.status==="watching"?"selected":"")+'>Watching</option><option value="planned" '+(x.status==="planned"?"selected":"")+'>Plan to watch</option><option value="completed" '+(x.status==="completed"?"selected":"")+'>Completed</option><option value="dropped" '+(x.status==="dropped"?"selected":"")+'>Dropped</option></select></label><button class="button button-quiet button-small remove-saved" data-id="'+a.id+'" style="margin-top:8px;width:100%">Remove</button></article>'}).join("");$$(".list-status",n).forEach(s=>s.addEventListener("change",()=>{const l=watchlist(),it=l.find(x=>Number(x.id)===Number(s.dataset.id));if(it)it.status=s.value;write(K.w,l);toast("Watchlist updated");if(filter!=="all")render()}));$$(".remove-saved",n).forEach(b=>b.addEventListener("click",()=>{write(K.w,watchlist().filter(x=>Number(x.id)!==Number(b.dataset.id)));render();toast("Removed from watchlist")}))}catch(e){n.innerHTML='<div class="empty-state"><p>'+esc(e.message)+'</p></div>'}}$$(".library-tab").forEach(b=>b.addEventListener("click",()=>{filter=b.dataset.list;$$(".library-tab").forEach(x=>x.classList.toggle("active",x===b));render()}));await render()}
