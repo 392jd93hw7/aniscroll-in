@@ -664,9 +664,10 @@ button,a,.button,select{ touch-action:manipulation; }
 .detail-section .related-grid .poster-cover{width:100%;aspect-ratio:2/3;height:auto}
 .detail-section .related-grid .poster-title{font-size:11px;line-height:1.35;margin-top:7px;min-height:0}
 .detail-section .related-grid .poster-meta{font-size:9px;margin-top:3px}
-@media(min-width:1251px){.detail-section .related-grid{grid-template-columns:repeat(4,minmax(0,115px));gap:14px}}
-@media(min-width:701px) and (max-width:1250px){.detail-section .related-grid{grid-template-columns:repeat(4,minmax(0,100px));gap:12px}}
-@media(max-width:700px){.detail-section .related-grid{grid-template-columns:repeat(3,minmax(0,76px));gap:10px}}
+/* Increase posters in Related titles / You might also like to 200px on wide screens. */
+@media(min-width:1251px){.detail-section .related-grid{grid-template-columns:repeat(4,minmax(0,200px));gap:18px}}
+@media(min-width:701px) and (max-width:1250px){.detail-section .related-grid{grid-template-columns:repeat(4,minmax(0,160px));gap:14px}}
+@media(max-width:700px){.detail-section .related-grid{grid-template-columns:repeat(3,minmax(0,120px));gap:10px}}
 
 /* Restore original homepage anime poster sizing. */
 .home-page .poster-grid{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 15px}
