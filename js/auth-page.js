@@ -34,6 +34,7 @@ async function initializeAuthPage(){
     const c=await getClerk();
     if(!c)throw Error("Clerk could not be initialized.");
     root.replaceChildren();
+    if(c.isSignedIn){message("You are already signed in. If you meant to use another account, sign out of Clerk first.");root.innerHTML='<div class="auth-already-signed-in"><p>You are already signed in to Aniscroll.</p><a class="button button-primary" href="/index.html">Continue to Aniscroll</a></div>';return}
     const redirect=returnUrl(),options={appearance:authAppearance};
     if(mode==="signup")c.mountSignUp(root,{...options,signInUrl:"/signin.html",fallbackRedirectUrl:redirect});
     else if(mode==="profile"&&c.isSignedIn)c.mountUserProfile(root,{...options});
