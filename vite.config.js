@@ -72,7 +72,8 @@ export default defineConfig(({ mode }) => {
           let claims;
           try {
             const parties = String(env.CLERK_AUTHORIZED_PARTIES || "").split(",").map(x => x.trim()).filter(Boolean);
-            claims = await verifyToken(token, { secretKey: env.CLERK_SECRET_KEY, ...(parties.length ? { authorizedParties: parties } : {}) });
+            if (!parties.length) { send(503, { error: "CLERK_AUTHORIZED_PARTIES is not configured in .env." }); return; }
+            claims = await verifyToken(token, { secretKey: env.CLERK_SECRET_KEY, authorizedParties: parties });
           } catch { send(401, { error: "Your session is invalid or expired. Sign in again." }); return; }
           const userId = String(claims?.sub || claims?.payload?.sub || "");
           if (!userId || userId.length > 255) { send(401, { error: "Could not verify the signed-in user." }); return; }
