@@ -1,0 +1,37 @@
+/* Aniscroll Clerk theme: align the hosted auth UI with the site's dark violet palette. */
+.auth-page-shell{width:min(100% - 32px,680px);margin:42px auto 76px}
+.auth-page-intro{max-width:520px;margin:0 auto 28px;text-align:center}
+.auth-page-intro h1{max-width:100%;font-size:clamp(32px,4.5vw,46px);line-height:1.12;letter-spacing:-1.7px;text-wrap:balance}
+.auth-page-intro h1 .violet{color:#d8b4fe}
+.auth-page-intro>p:last-child{max-width:460px;font-size:14px;line-height:1.7;color:#9298aa}
+.auth-card{width:100%;min-width:0;padding:clamp(14px,3vw,28px);background:linear-gradient(145deg,#151722,#0d0e15);border:1px solid #ffffff12;border-radius:20px;box-shadow:0 24px 80px #0005;overflow:hidden}
+.auth-mount{display:flex;justify-content:center;align-items:flex-start;width:100%;min-width:0}
+.auth-mount .cl-rootBox{width:100%;max-width:100%;margin:0 auto}
+.auth-mount .cl-cardBox{width:100%;max-width:100%;box-shadow:none!important}
+.auth-mount .cl-card{width:100%;max-width:100%;background:#11131c!important;border:1px solid #ffffff12!important;border-radius:14px!important;box-shadow:none!important;color:#f4f5fa!important}
+.auth-mount .cl-headerTitle,.auth-mount .cl-userPreviewMainIdentifier{color:#f4f5fa!important}
+.auth-mount .cl-headerSubtitle,.auth-mount .cl-formFieldHintText,.auth-mount .cl-footerActionText{color:#9298aa!important}
+.auth-mount .cl-formFieldLabel{color:#d9dbea!important}
+.auth-mount .cl-formFieldInput,.auth-mount input,.auth-mount select{background:#090a10!important;border:1px solid #343746!important;color:#f4f5fa!important;border-radius:9px!important;box-shadow:none!important}
+.auth-mount .cl-formFieldInput:focus,.auth-mount input:focus{border-color:#a78bfa!important;box-shadow:0 0 0 2px #a78bfa24!important}
+.auth-mount .cl-formButtonPrimary{background:linear-gradient(110deg,#a78bfa,#8b5cf6)!important;color:#171126!important;border:0!important;border-radius:9px!important;box-shadow:none!important}
+.auth-mount .cl-formButtonPrimary:hover{background:#c4b5fd!important}
+.auth-mount .cl-socialButtonsBlockButton,.auth-mount .cl-socialButtonsIconButton{background:#171923!important;color:#f4f5fa!important;border:1px solid #343746!important;border-radius:9px!important;box-shadow:none!important}
+.auth-mount .cl-socialButtonsBlockButton:hover,.auth-mount .cl-socialButtonsIconButton:hover{background:#202230!important}
+.auth-mount .cl-dividerLine{background:#ffffff18!important}
+.auth-mount .cl-dividerText{color:#9298aa!important}
+.auth-mount .cl-footer,.auth-mount .cl-footerPages{background:transparent!important}
+.auth-mount .cl-footerActionLink,.auth-mount .cl-identityPreviewEditButton{color:#d8b4fe!important}
+.auth-mount .cl-badge{background:#a78bfa1c!important;color:#d8b4fe!important;border-color:#a78bfa35!important}
+.auth-mount .cl-alert{border-radius:9px!important}
+.auth-links{margin-top:20px;gap:8px 10px}
+.auth-links a{color:#d8b4fe}
+.auth-small-print{line-height:1.6}
+@media(max-width:560px){
+ .auth-page-shell{width:calc(100% - 24px);margin:25px auto 48px}
+ .auth-page-intro{margin-bottom:20px}
+ .auth-page-intro h1{font-size:clamp(29px,8vw,38px);letter-spacing:-1.1px}
+ .auth-page-intro>p:last-child{font-size:13px}
+ .auth-card{padding:10px;border-radius:15px}
+ .auth-mount .cl-card{border-radius:11px!important}
+}
