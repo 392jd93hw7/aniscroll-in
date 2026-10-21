@@ -154,7 +154,7 @@ Create a local `.env` from `.env.example`; configure the same variables in Verce
 - `DATABASE_URL`: Neon PostgreSQL connection string; server only.
 - `MAL_CLIENT_ID`: existing MyAnimeList proxy key if used.
 
-In Clerk, enable email/password sign-in and email verification, disable social sign-in providers, and configure production and Codespaces origins. Use a development key locally and production keys for `aniscroll.in`.
+In Clerk, enable email/password sign-in and email verification, disable social sign-in providers, and configure production and Codespaces origins. Use a development key locally and production keys for `aniscroll.in`. Set `CLERK_AUTHORIZED_PARTIES` to comma-separated exact origins: include `http://localhost:8443` when applicable, the full forwarded Codespaces origin, and `https://aniscroll.in` (plus your Vercel preview origin only when testing that preview). The server rejects requests if this allowlist is missing.
 
 The schema is in `database/schema.sql`; the API creates the table if missing. The API uses parameterized queries and only reads/writes records linked to the verified Clerk token subject.
 
