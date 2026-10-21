@@ -67,7 +67,7 @@ export default defineConfig(({ mode }) => {
           if (!["GET", "PUT"].includes(req.method)) { res.setHeader("Allow", "GET, PUT"); send(405, { error: "Method not allowed" }); return; }
           if (!env.CLERK_SECRET_KEY) { send(503, { error: "CLERK_SECRET_KEY is not configured in .env." }); return; }
           if (!env.DATABASE_URL) { send(503, { error: "DATABASE_URL is not configured in .env." }); return; }
-          const token = String(req.headers.authorization || "").match(/^Bearer\\s+(.+)$/i)?.[1];
+          const token = String(req.headers.authorization || "").match(/^Bearer\s+(.+)$/i)?.[1];
           if (!token) { send(401, { error: "Sign in to access your cloud library." }); return; }
           let claims;
           try {
