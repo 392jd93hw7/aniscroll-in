@@ -762,3 +762,16 @@ button,a,.button,select{ touch-action:manipulation; }
  .header-search.search-open input{display:block!important;flex:1;min-width:0;width:100%;font-size:16px}
  .header-search span[role="button"]{cursor:pointer;touch-action:manipulation}
 }
+
+/* Keep mobile search immediately to the left of the account avatar. */
+@media(max-width:760px){
+  .site-header .header-search{order:3;margin-left:auto!important;flex:0 0 36px;width:36px;min-width:36px}
+  .site-header .auth-control{order:4;margin-left:0!important;flex:0 0 auto}
+  .site-header .mobile-menu{order:5;flex:0 0 36px}
+  .site-header .header-search.search-open{left:auto;right:92px;width:min(62vw,280px);min-width:0;flex:0 1 min(62vw,280px)}
+}
+@media(max-width:420px){
+  .site-header .header-search{flex-basis:32px;width:32px;min-width:32px}
+  .site-header .mobile-menu{flex-basis:32px;width:32px}
+  .site-header .header-search.search-open{right:84px;width:min(58vw,250px);flex-basis:min(58vw,250px)}
+}
