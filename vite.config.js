@@ -103,6 +103,6 @@ export default defineConfig(({ mode }) => {
       }
     }],
     server: { proxy: { "/api/mal": { target:"https://api.myanimelist.net", changeOrigin:true, rewrite:path=>path.replace(/^\/api\/mal/,"/v2"), configure:proxy=>proxy.on("proxyReq",req=>{if(env.MAL_CLIENT_ID)req.setHeader("X-MAL-CLIENT-ID",env.MAL_CLIENT_ID)}) } } },
-    build: { outDir:"dist", emptyOutDir:true, rollupOptions:{ input:{home:resolve(process.cwd(),"index.html"),anime:resolve(process.cwd(),"anime.html"),watch:resolve(process.cwd(),"watch.html"),search:resolve(process.cwd(),"search.html"),schedule:resolve(process.cwd(),"schedule.html"),watchlist:resolve(process.cwd(),"watchlist.html"),history:resolve(process.cwd(),"history.html"),signin:resolve(process.cwd(),"signin.html"),signup:resolve(process.cwd(),"signup.html"),profile:resolve(process.cwd(),"profile.html"),notFound:resolve(process.cwd(),"404.html")} } }
+    build: { outDir:"dist", emptyOutDir:true, rollupOptions:{ input:{home:resolve(process.cwd(),"index.html"),anime:resolve(process.cwd(),"anime.html"),watch:resolve(process.cwd(),"watch.html"),search:resolve(process.cwd(),"search.html"),schedule:resolve(process.cwd(),"schedule.html"),watchlist:resolve(process.cwd(),"watchlist.html"),history:resolve(process.cwd(),"history.html"),signin:resolve(process.cwd(),"signin.html"),signup:resolve(process.cwd(),"signup.html"),notFound:resolve(process.cwd(),"404.html")} } }
   };
 });
