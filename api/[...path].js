@@ -28,10 +28,11 @@ async function handleAccountLibrary(req, res) {
   if (!["GET", "PUT"].includes(req.method)) { res.setHeader("Allow", "GET, PUT"); return sendAccount(res, 405, { error: "Method not allowed" }); }
   if (!process.env.CLERK_SECRET_KEY) return sendAccount(res, 503, { error: "Clerk server configuration is missing." });
   if (!process.env.DATABASE_URL) return sendAccount(res, 503, { error: "Database server configuration is missing." });
-  const token = String(req.headers?.authorization || "").match(/^Bearer\\s+(.+)$/i)?.[1];
+  const token = String(req.headers?.authorization || "").match(/^Bearer\s+(.+)$/i)?.[1];
   if (!token) return sendAccount(res, 401, { error: "Sign in to access your cloud library." });
   let claims;
-  try { claims = await verifyToken(token, { secretKey: process.env.CLERK_SECRET_KEY }); }
+  try { const authorizedParties = String(process.env.CLERK_AUTHORIZED_PARTIES || "").split(",").map((origin) => origin.trim()).filter(Boolean);
+    claims = await verifyToken(token, { secretKey: process.env.CLERK_SECRET_KEY, ...(authorizedParties.length ? { authorizedParties } : {}) }); }
   catch { return sendAccount(res, 401, { error: "Your session is invalid or expired. Sign in again." }); }
   const userId = String(claims?.sub || claims?.payload?.sub || "");
   if (!userId || userId.length > 255) return sendAccount(res, 401, { error: "Could not verify the signed-in user." });
