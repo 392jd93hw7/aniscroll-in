@@ -693,3 +693,66 @@ button,a,.button,select{ touch-action:manipulation; }
 .auth-control{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-left:auto;flex-shrink:0}.auth-control .button{white-space:nowrap}.auth-control #clerk-user-button{display:flex;align-items:center;min-width:36px;min-height:36px}.auth-page-shell{width:min(100% - 32px,560px);margin:48px auto 90px}.auth-page-intro{text-align:center;margin-bottom:26px}.auth-page-intro h1{font:700 clamp(30px,5vw,42px) 'Space Grotesk';letter-spacing:-1.3px;margin:8px 0 12px}.auth-page-intro p{color:var(--muted);margin:0 auto;max-width:440px}.auth-card{background:linear-gradient(145deg,#151722,#0f1018);border:1px solid var(--line);border-radius:22px;padding:clamp(18px,4vw,32px);box-shadow:0 24px 80px #0004;min-height:160px}.auth-mount{width:100%;display:flex;justify-content:center}.auth-status{color:var(--muted);text-align:center;padding:18px 10px}.auth-status.error{color:#fda4af}.auth-small-print{color:var(--muted);font-size:12px;text-align:center;margin:16px 0 0}.auth-links{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:18px;color:var(--muted);font-size:14px}.auth-links a{color:var(--accent2);text-decoration:underline;text-underline-offset:3px}.auth-control .cl-userButtonBox,.auth-control .cl-avatarBox{display:flex}
 @media(max-width:900px){.auth-control{margin-left:auto}.auth-control .button{padding:8px 10px}.site-header{gap:14px}}
 @media(max-width:560px){.auth-control{gap:6px}.auth-control .button{font-size:12px;padding:7px 9px}.site-header{gap:9px}.auth-page-shell{margin-top:28px}}
+
+
+/* Final mobile UX refinements — touch-friendly, overflow-safe layouts. */
+@media(max-width:760px){
+  .site-header,.home-page .site-header{display:flex;align-items:center;gap:7px;padding-inline:10px}
+  .brand,.home-page .brand{flex:0 0 auto}
+  .main-nav{z-index:120}
+  .header-search{flex:0 1 40px}
+  .auth-control{display:flex;align-items:center;gap:5px;margin-left:auto;flex-shrink:0}
+  .auth-control .button{min-height:36px;padding-inline:9px;font-size:11px}
+  .auth-control #clerk-user-button{min-width:36px;min-height:36px}
+  .auth-control .cl-avatarBox,.auth-control .cl-userButtonBox{width:34px;height:34px}
+  .button,.library-tab,.page-button,.control-select,.episode-row,.schedule-item a{min-height:40px}
+  .hero-actions,.detail-actions,.watch-actions,.player-actions{gap:8px}
+  .hero-actions .button,.detail-actions .button{flex:0 1 auto;min-height:44px}
+  .detail-layout,.watch-layout{gap:18px}
+  .detail-hero{min-height:0}
+  .detail-content{align-items:start}
+  .detail-description{font-size:13px;line-height:1.7}
+  .poster-card a{display:block}
+  .poster-title{overflow-wrap:anywhere}
+  .filter-panel{position:relative}
+  .search-submit{width:100%}
+  .episode-list{max-height:none}
+  input,select,textarea{font-size:16px}
+  .auth-page-shell{width:calc(100% - 24px);margin:24px auto 48px}
+  .auth-card{padding:12px;border-radius:16px}
+  .auth-page-intro h1{letter-spacing:-.8px}
+}
+@media(max-width:420px){
+  .site-header,.home-page .site-header{padding-inline:8px;gap:4px}
+  .brand,.home-page .brand{font-size:17px;gap:5px}
+  .brand-mark,.home-page .brand-mark{width:27px;height:27px;min-width:27px;font-size:16px}
+  .header-search{min-width:34px;flex-basis:34px;width:34px;padding-inline:5px}
+  .mobile-menu{width:32px;min-width:32px;height:36px}
+  .auth-control{gap:4px}
+  .auth-control .button{min-height:34px;padding-inline:7px;font-size:10px}
+  .auth-control #clerk-user-button{min-width:32px;min-height:32px}
+  .auth-control .cl-avatarBox,.auth-control .cl-userButtonBox{width:31px;height:31px}
+  .spotlight{border-radius:0}
+  .spotlight-content{padding-bottom:82px}
+  .spotlight-description{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+  .section-heading{align-items:center}
+  .section-heading .text-link{white-space:nowrap}
+  .poster-score{top:4px;left:4px;padding:3px 5px}
+  .poster-format{bottom:4px;left:4px;padding:3px 5px}
+  .detail-content{grid-template-columns:78px minmax(0,1fr);gap:12px;padding:13px}
+  .detail-content .detail-cover{width:78px}
+  .detail-title{font-size:22px;overflow-wrap:anywhere}
+  .detail-stats{flex-wrap:wrap}
+  .related-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .player-topbar{padding:12px}
+  .player-bottom{padding:12px}
+  .episode-picker{flex-wrap:wrap}
+  .episode-actions{margin-left:0}
+  .schedule-item{grid-template-columns:52px 42px minmax(0,1fr);gap:6px;padding:9px}
+  .schedule-title{overflow-wrap:anywhere}
+}
+@media(hover:none){
+  .poster-overlay{display:none}
+  .poster-card:hover .poster-cover img{transform:none;filter:none}
+  .button:hover{transform:none}
+}
