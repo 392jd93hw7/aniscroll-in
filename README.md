@@ -150,6 +150,7 @@ Create a local `.env` from `.env.example`; configure the same variables in Verce
 
 - `VITE_CLERK_PUBLISHABLE_KEY`: Clerk publishable key.
 - `CLERK_SECRET_KEY`: Clerk secret key; server only.
+- `CLERK_AUTHORIZED_PARTIES`: comma-separated allowed frontend origins (include your deployed domain and the exact Codespaces origin; localhost is useful for local development).
 - `DATABASE_URL`: Neon PostgreSQL connection string; server only.
 - `MAL_CLIENT_ID`: existing MyAnimeList proxy key if used.
 
