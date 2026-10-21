@@ -140,3 +140,27 @@ Never commit API credentials, private tokens, or other secrets.
 ## License
 
 See the `LICENSE` file for the project license. Third-party services, artwork, and media are not relicensed by the project license.
+
+
+## Clerk authentication and Neon cloud library
+
+Authentication uses Clerk's vanilla JavaScript SDK. The Vercel API verifies Clerk session tokens before accessing Neon PostgreSQL. The browser never connects directly to Neon and must never receive `CLERK_SECRET_KEY` or `DATABASE_URL`.
+
+Create a local `.env` from `.env.example`; configure the same variables in Vercel Project Settings → Environment Variables for each deployment environment. Never commit real keys or a database connection string.
+
+- `VITE_CLERK_PUBLISHABLE_KEY`: Clerk publishable key.
+- `CLERK_SECRET_KEY`: Clerk secret key; server only.
+- `DATABASE_URL`: Neon PostgreSQL connection string; server only.
+- `MAL_CLIENT_ID`: existing MyAnimeList proxy key if used.
+
+In Clerk, enable email/password sign-in and email verification, disable social sign-in providers, and configure production and Codespaces origins. Use a development key locally and production keys for `aniscroll.in`.
+
+The schema is in `database/schema.sql`; the API creates the table if missing. The API uses parameterized queries and only reads/writes records linked to the verified Clerk token subject.
+
+- `/signin.html`: sign-in UI.
+- `/signup.html`: sign-up UI.
+- `/profile.html`: Clerk profile management UI.
+- `GET /api/account/library`: fetch the user's cloud library.
+- `PUT /api/account/library`: store one `watchlist` or `history` collection.
+
+Test signup, email verification, sign-in, password reset, profile editing, and cross-device library sync before production deployment.

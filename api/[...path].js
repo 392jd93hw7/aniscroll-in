@@ -1,3 +1,62 @@
+import { verifyToken } from "@clerk/backend";
+import { neon } from "@neondatabase/serverless";
+
+let accountSchemaPromise;
+async function ensureAccountSchema(sql) {
+  if (!accountSchemaPromise) {
+    accountSchemaPromise = sql`CREATE TABLE IF NOT EXISTS aniscroll_user_library (
+      clerk_user_id TEXT NOT NULL,
+      collection TEXT NOT NULL CHECK (collection IN ('watchlist', 'history')),
+      data JSONB NOT NULL DEFAULT '[]'::jsonb,
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      PRIMARY KEY (clerk_user_id, collection)
+    )`.catch((error) => { accountSchemaPromise = null; throw error; });
+  }
+  await accountSchemaPromise;
+}
+function sendAccount(res, status, body) {
+  res.statusCode = status; res.setHeader("Content-Type", "application/json; charset=utf-8");
+  res.setHeader("Cache-Control", "no-store"); res.setHeader("X-Content-Type-Options", "nosniff");
+  return res.end(JSON.stringify(body));
+}
+function parseAccountBody(req) {
+  if (req.body && typeof req.body === "object") return req.body;
+  if (typeof req.body === "string") return JSON.parse(req.body);
+  return {};
+}
+async function handleAccountLibrary(req, res) {
+  if (!["GET", "PUT"].includes(req.method)) { res.setHeader("Allow", "GET, PUT"); return sendAccount(res, 405, { error: "Method not allowed" }); }
+  if (!process.env.CLERK_SECRET_KEY) return sendAccount(res, 503, { error: "Clerk server configuration is missing." });
+  if (!process.env.DATABASE_URL) return sendAccount(res, 503, { error: "Database server configuration is missing." });
+  const token = String(req.headers?.authorization || "").match(/^Bearer\\s+(.+)$/i)?.[1];
+  if (!token) return sendAccount(res, 401, { error: "Sign in to access your cloud library." });
+  let claims;
+  try { claims = await verifyToken(token, { secretKey: process.env.CLERK_SECRET_KEY }); }
+  catch { return sendAccount(res, 401, { error: "Your session is invalid or expired. Sign in again." }); }
+  const userId = String(claims?.sub || claims?.payload?.sub || "");
+  if (!userId || userId.length > 255) return sendAccount(res, 401, { error: "Could not verify the signed-in user." });
+  const sql = neon(process.env.DATABASE_URL);
+  try {
+    await ensureAccountSchema(sql);
+    if (req.method === "GET") {
+      const rows = await sql`SELECT collection, data FROM aniscroll_user_library WHERE clerk_user_id = ${userId}`;
+      const output = { watchlist: [], history: [] };
+      for (const row of rows) if (row.collection === "watchlist" || row.collection === "history") output[row.collection] = Array.isArray(row.data) ? row.data : [];
+      return sendAccount(res, 200, output);
+    }
+    let body;
+    try { body = parseAccountBody(req); } catch { return sendAccount(res, 400, { error: "Invalid JSON body." }); }
+    const collection = body?.collection, data = body?.data;
+    if (!["watchlist", "history"].includes(collection) || !Array.isArray(data)) return sendAccount(res, 400, { error: "Provide a watchlist or history array." });
+    if (data.length > (collection === "watchlist" ? 1000 : 100) || JSON.stringify(data).length > 250000) return sendAccount(res, 413, { error: "Library payload is too large." });
+    await sql`INSERT INTO aniscroll_user_library (clerk_user_id, collection, data, updated_at) VALUES (${userId}, ${collection}, ${JSON.stringify(data)}::jsonb, NOW()) ON CONFLICT (clerk_user_id, collection) DO UPDATE SET data = EXCLUDED.data, updated_at = NOW()`;
+    return sendAccount(res, 200, { ok: true, collection, count: data.length });
+  } catch (error) {
+    console.error("Aniscroll account library request failed:", error?.message || error);
+    return sendAccount(res, 500, { error: "Cloud library unavailable. Check Neon schema and server configuration." });
+  }
+}
+
 const validGenres = new Set(["action","adventure","cars","comedy","dementia","demons","drama","ecchi","fantasy","game","harem","historical","horror","josei","kids","magic","martial arts","mecha","military","music","mystery","parody","police","psychological","romance","samurai","school","sci-fi","seinen","shoujo","shoujo ai","shounen","shounen ai","slice of life","space","sports","super power","supernatural","thriller","vampire","yaoi","yuri"]);
 const noStore = { "Cache-Control": "no-store" };
 const fields = "alternative_titles,synopsis,mean,rank,popularity,num_episodes,average_episode_duration,media_type,status,start_date,end_date,genres";
@@ -26,13 +85,14 @@ async function fetchJson(url, options = {}, timeoutMs = 10000) {
 }
 
 export default async function handler(req, res) {
+  const url = new URL(req.url || "/", "https://aniscroll.vercel.app");
+  const path = url.pathname;
+  if (path === "/api/account/library") return handleAccountLibrary(req, res);
+
   if (req.method !== "GET") {
     res.setHeader("Allow", "GET");
     return send(res, 405, { error: "Method not allowed" }, noStore);
   }
-  const url = new URL(req.url || "/", "https://aniscroll.vercel.app");
-  const path = url.pathname;
-
   if (path === "/api/health") {
     return send(res, 200, { ok: true, app: "Aniscroll", timestamp: new Date().toISOString() }, noStore);
   }
