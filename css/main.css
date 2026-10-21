@@ -756,3 +756,9 @@ button,a,.button,select{ touch-action:manipulation; }
   .poster-card:hover .poster-cover img{transform:none;filter:none}
   .button:hover{transform:none}
 }
+
+@media(max-width:760px){
+ .header-search.search-open{position:absolute;left:10px;right:57px;z-index:130;width:auto;min-width:0;max-width:none;height:40px;padding:0 11px;background:#11131c;border:1px solid #ffffff30;justify-content:flex-start}
+ .header-search.search-open input{display:block!important;flex:1;min-width:0;width:100%;font-size:16px}
+ .header-search span[role="button"]{cursor:pointer;touch-action:manipulation}
+}
