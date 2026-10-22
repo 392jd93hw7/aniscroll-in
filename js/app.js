@@ -246,7 +246,7 @@ async function watchPage(){
    const src=streamURL(provider,id,ep,mode,malId,useMalIds)+"?color=a78bfa";
    const frame=document.createElement("iframe");
    frame.src=src;frame.title=animeTitle+" episode "+ep;
-   frame.allow="autoplay; fullscreen; picture-in-picture";if(provider==="zokoanime")frame.setAttribute("sandbox","allow-scripts allow-same-origin allow-forms allow-presentation allow-orientation-lock allow-pointer-lock");
+   frame.allow="autoplay; fullscreen; picture-in-picture";if(provider==="zokoanime")frame.setAttribute("sandbox","allow-scripts allow-same-origin allow-forms allow-presentation allow-orientation-lock allow-pointer-lock allow-downloads allow-popups allow-popups-to-escape-sandbox");
    frame.loading="eager";frame.referrerPolicy="strict-origin-when-cross-origin";
    frame.addEventListener("error",()=>handleStreamFailure());
    frame.addEventListener("load",()=>{if(frameLoadTimer){clearTimeout(frameLoadTimer);frameLoadTimer=null}});
