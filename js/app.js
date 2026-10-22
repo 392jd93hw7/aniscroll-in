@@ -134,7 +134,7 @@ async function watchPage(){
     '</aside>'+
     '<section class="watch-main-column">'+
      '<div class="reference-player"><div class="video-frame-wrap" id="video-frame-wrap"></div>'+
-      '</div><div class="watch-download-action"><a class="button button-primary button-small" id="open-download-page" href="#" target="_blank" rel="noopener noreferrer">Open download page ↗</a><span>Opens the current episode on the selected streaming provider.</span></div>'+
+      '</div>'+
    ((a.status==="RELEASING"&&a.nextAiringEpisode&&Number(a.nextAiringEpisode.airingAt)*1000>Date.now())?'<div class="airing-notice" id="airing-notice"><span class="airing-notice-message">♧ The next episode is predicted to arrive on <strong id="airing-date"></strong> <span id="airing-countdown"></span></span><button type="button" class="airing-notice-close" id="airing-notice-close" aria-label="Dismiss airing notice">×</button></div>':'')+
      '<div class="watch-action-bar"><button type="button" class="watch-action" id="light-toggle">💡 Light <strong>On</strong></button><button type="button" class="watch-action" id="autoplay-toggle">Auto Play <strong>On</strong></button><button type="button" class="watch-action" id="autonext-toggle">Auto Next <strong>Off</strong></button><button type="button" class="watch-action" id="skipintro-toggle">Auto Skip Intro <strong>Off</strong></button><button type="button" class="watch-action" id="save-watch">＋ Add to List</button><a class="watch-action" href="#watch-together">◉ Watch2gether</a><button type="button" class="watch-action" id="prev-text">◀ Prev</button><button type="button" class="watch-action" id="next-text">Next ▶</button><button type="button" class="watch-action" id="report-player">⚠ Report</button></div>'+
      '<div class="watch-server-panel"><div class="watch-server-note"><strong id="server-note-title">You are watching Episode '+ep+'</strong><p>If current server doesn’t work, please try another server beside.</p></div><div class="watch-server-options">'+
@@ -243,8 +243,7 @@ async function watchPage(){
     }catch{}
    }
    if(version!==loadVersion)return;
-   const providerURL=streamURL(provider,id,ep,mode,malId,useMalIds);const downloadLink=$("#open-download-page");if(downloadLink){downloadLink.href=providerURL;downloadLink.textContent="Open "+(provider==="megaplay"?"MegaPlay":"ZokoAnime")+" download page ↗";downloadLink.setAttribute("aria-label","Open "+animeTitle+" episode "+ep+" on "+(provider==="megaplay"?"MegaPlay":"ZokoAnime"));}
-   const src=providerURL+"?color=a78bfa";
+   const src=streamURL(provider,id,ep,mode,malId,useMalIds)+"?color=a78bfa";
    const frame=document.createElement("iframe");
    frame.src=src;frame.title=animeTitle+" episode "+ep;
    frame.allow="autoplay; fullscreen; picture-in-picture";if(provider==="zokoanime")frame.setAttribute("sandbox","allow-scripts allow-same-origin allow-forms allow-presentation allow-orientation-lock allow-pointer-lock");
