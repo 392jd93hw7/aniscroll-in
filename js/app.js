@@ -139,7 +139,7 @@ async function watchPage(){
      '<div class="watch-action-bar"><button type="button" class="watch-action" id="light-toggle">💡 Light <strong>On</strong></button><button type="button" class="watch-action" id="autoplay-toggle">Auto Play <strong>On</strong></button><button type="button" class="watch-action" id="autonext-toggle">Auto Next <strong>Off</strong></button><button type="button" class="watch-action" id="skipintro-toggle">Auto Skip Intro <strong>Off</strong></button><button type="button" class="watch-action" id="save-watch">＋ Add to List</button><a class="watch-action" href="#watch-together">◉ Watch2gether</a><button type="button" class="watch-action" id="prev-text">◀ Prev</button><button type="button" class="watch-action" id="next-text">Next ▶</button><button type="button" class="watch-action" id="report-player">⚠ Report</button></div>'+
      '<div class="watch-server-panel"><div class="watch-server-note"><strong id="server-note-title">You are watching Episode '+ep+'</strong><p>If current server doesn’t work, please try another server beside.</p></div><div class="watch-server-options">'+
       '<div class="server-row"><span class="server-label">▣ &nbsp; SUB:</span><button class="server-choice" data-provider="zokoanime" data-mode="sub">ZokoAnime</button><button class="server-choice" data-provider="megaplay" data-mode="sub">MegaPlay</button></div>'+
-      '<div class="server-row" id="dub-server-row"><span class="server-label">♩ &nbsp; DUB:</span><span class="dub-availability" id="dub-availability" role="status">Checking availability…</span></div>'+
+      '<div class="server-row" id="dub-server-row"><span class="server-label">♩ &nbsp; DUB:</span></div>'+
       ''+
      '</div></div>'+
      '<section class="watch-anime-info"><img class="watch-info-poster" src="'+esc(poster)+'" alt="'+esc(animeTitle)+' poster"><div class="watch-info-copy"><h1>'+esc(animeTitle)+'</h1><div class="watch-info-stats"><span class="rating-badge">R</span><span class="rating-badge pink">HD</span><span class="rating-badge green">CC '+(count||"—")+'</span><span class="rating-badge blue">♩ '+(count||"—")+'</span><span class="watch-meta-dot">• '+esc(a.format||"TV")+' • '+(a.duration?Number(a.duration)+"m":"24m")+'</span></div><p>'+esc(description.slice(0,540))+(description.length>540?' …':'')+' <button class="inline-more" id="more-description">＋ More</button></p><a class="button button-quiet button-small" href="/watch.html?id='+id+(malId?"&mal="+malId:"")+(metadataFromMal?"&source=mal":"")+'">View detail</a></div></section>'+
@@ -152,7 +152,6 @@ async function watchPage(){
    if(!subRow||!dubRow)return;
    const updateRow=(row,audioMode)=>{
     row.querySelectorAll(".server-choice").forEach(button=>button.remove());
-    row.querySelectorAll(".audio-unavailable,#dub-availability").forEach(note=>note.remove());
     ["zokoanime","megaplay"].forEach(name=>{
      const button=document.createElement("button");
      button.type="button";button.className="server-choice";button.dataset.provider=name;button.dataset.mode=audioMode;
