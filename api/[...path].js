@@ -99,33 +99,6 @@ export default async function handler(req, res) {
     return send(res, 200, { ok: true, app: "Aniscroll", timestamp: new Date().toISOString() }, noStore);
   }
 
-  if (path === "/api/provider-availability") {
-    const id = Number(url.searchParams.get("id"));
-    const mal = Number(url.searchParams.get("mal"));
-    const ep = Number(url.searchParams.get("ep")) || 1;
-    const mode = url.searchParams.get("mode") === "dub" ? "dub" : "sub";
-    if ((!Number.isSafeInteger(id) || id < 1) && (!Number.isSafeInteger(mal) || mal < 1)) {
-      return send(res, 400, { error: "Invalid anime ID" }, noStore);
-    }
-    if (!Number.isSafeInteger(ep) || ep < 1) return send(res, 400, { error: "Invalid episode" }, noStore);
-    const streamId = mal > 0 ? "mal/" + mal : "ani/" + id;
-    const candidates = [
-      { provider: "zokoanime", url: `https://zokoanime.video/stream/${streamId}/${ep}/${mode}?color=a78bfa` },
-      { provider: "megaplay", url: `https://megaplay.buzz/stream/${streamId}/${ep}/${mode}` }
-    ];
-    const providers = await Promise.all(candidates.map(async candidate => {
-      try {
-        const response = await fetchJson(candidate.url, {}, 8000);
-        const body = (await response.text()).slice(0, 12000).toLowerCase();
-        const isError = /not found|404|couldn.t find anything to play|nothing to play|no stream|stream unavailable|episode unavailable|oops! something went wrong|something went wrong|page you.re looking for doesn.t exist|doesn.t exist or has|page not found|tv tokyo/.test(body);
-        return { provider: candidate.provider, available: response.ok && !isError };
-      } catch {
-        return { provider: candidate.provider, available: false };
-      }
-    }));
-    return send(res, 200, { providers }, noStore);
-  }
-
   if (path === "/api/mal/genre") {
     if (!malKey(res)) return;
     const genre = (url.searchParams.get("genre") || "").trim().toLowerCase();
